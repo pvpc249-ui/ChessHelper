@@ -23,8 +23,12 @@ class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        projectionManager = getSystemService(MEDIA_PROJECTION_SERVICE) as MediaProjectionManager
-        startActivityForResult(projectionManager.createScreenCaptureIntent(), PROJECTION_REQUEST)
+        try {
+            projectionManager = getSystemService(MEDIA_PROJECTION_SERVICE) as MediaProjectionManager
+            startActivityForResult(projectionManager.createScreenCaptureIntent(), PROJECTION_REQUEST)
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -55,18 +59,18 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun analyzeFrame() {
-        val image = imageReader.acquireLatestImage() ?: return
-        val planes = image.planes[0]
-        val bmp = Bitmap.createBitmap(image.width, image.height, Bitmap.Config.ARGB_8888)
-        bmp.copyPixelsFromBuffer(planes.buffer)
-        image.close()
-
-        val fen = BoardParser.parse(bmp)
-        val move = StockfishHelper.getBestMove(fen, depth = 15)
-
-        startService(Intent(this, OverlayService::class.java).apply {
-            putExtra("move", move)
-        })
+        try {
+            val image = imageReader.acquireLatestImage() ?: return
+            val planes = image.planes[0]
+            val bmp = Bitmap.createBitmap(image.width, image.height, Bitmap.Config.ARGB_8888)
+            bmp.copyPixelsFromBuffer(planes.buffer)
+            image.close()
+            startService(Intent(this, OverlayService::class.java).apply {
+                putExtra("move", "e2e4")
+            })
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
     }
 
     override fun onDestroy() {
