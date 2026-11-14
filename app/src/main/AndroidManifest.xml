@@ -20,9 +20,9 @@
             </intent-filter>
         </activity>
 
-        <service
-            android:name=".OverlayService"
-            android:exported="false"
+        <service android:name=".OverlayService" android:exported="false"
+            android:foregroundServiceType="mediaProjection"/>
+        <service android:name=".FloatingButtonService" android:exported="false"
             android:foregroundServiceType="mediaProjection"/>
 
     </application>
